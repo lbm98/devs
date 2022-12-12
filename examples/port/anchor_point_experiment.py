@@ -1,4 +1,3 @@
-# from pypdevs.minimal import Simulator
 from pypdevs.simulator import Simulator
 from generator import Generator
 

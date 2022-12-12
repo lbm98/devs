@@ -1,5 +1,10 @@
 class Vessel:
-    pass
+
+    def __init__(self, uid):
+        # The unique identifier for a vessel
+        # Set by Generator
+        self.uid = uid
+        # self.creation_time = creation_time
 
 
 class CrudeOilTanker(Vessel):

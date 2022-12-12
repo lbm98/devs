@@ -1,15 +1,15 @@
-from pypdevs.minimal import AtomicDEVS
-# from pypdevs.DEVS import AtomicDEVS
+# from pypdevs.minimal import AtomicDEVS
+from pypdevs.DEVS import AtomicDEVS
 from pypdevs.infinity import INFINITY
 
 from dataclasses import dataclass
 
-from vessel import *
+from vessels import *
 import random
 import numpy as np
 
 # Average amount of vessels arriving at the port on an hourly basis
-NUM_VESSELS_ARRIVING_PER_HOUR = [20, 120, 150, 175, 125, 50, 42, 68, 200, 220, 250, 245, 253, 236, 227, 246, 203, 43,
+NUM_VESSELS_ARRIVING_PER_HOUR = [100, 120, 150, 175, 125, 50, 42, 68, 200, 220, 250, 245, 253, 236, 227, 246, 203, 43,
                                  51, 33, 143, 187, 164, 123]
 
 
@@ -58,4 +58,4 @@ class Generator(AtomicDEVS):
         # Choose vessel type
         weights = [vessel.prob for vessel in ALL_VESSELS]
         chosen_vessel_obj = random.choices(ALL_VESSELS, weights=weights)[0]
-        return {self.out: chosen_vessel_obj()}
+        return {self.out: chosen_vessel_obj(uid=self.state.vessel_count)}
