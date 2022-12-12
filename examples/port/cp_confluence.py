@@ -8,21 +8,13 @@ from messages import PortEntryRequest, PortEntryPermission
 
 
 @dataclass
-class AnchorPointState:
+class CpConfluenceState:
     # The remaining time until generation of a new event
-    # We only react to external events
     # Wait INDEFINITELY for the first input
     remaining_time = INFINITY
 
-    # The datastructure to queue the waiting Vessel's
-    vessels = []
-
-    # We need to send output, in response to input
-    # This is not directly supported in DEVS
-    # So, we use these variables
-    what_to_do = ""
-    stored_port_entry_request: PortEntryRequest = None
-    stored_vessel: Vessel = None
+    # The datastructure that stores [vessel,timer] pairs
+    vessel_timer_pairs = []
 
 
 class AnchorPoint(AtomicDEVS):
@@ -31,14 +23,10 @@ class AnchorPoint(AtomicDEVS):
 
         # Receives Vessel's
         self.in_vessel = self.addInPort("in_vessel")
-        # Receives PortEntryPermission's
-        self.in_port_entry_permission = self.addInPort("in_port_entry_permission")
-        # Sends PortEntryRequest's
-        self.out_port_entry_request = self.addOutPort("out_port_entry_request")
         # Sends Vessel's
         self.out_vessel = self.addOutPort("out_vessel")
 
-        self.state = AnchorPointState()
+        self.state = CpConfluenceState()
 
     def intTransition(self):
         # After responding to an input, wait INDEFINITELY for a new input
@@ -47,8 +35,13 @@ class AnchorPoint(AtomicDEVS):
 
     def extTransition(self, inputs):
         if self.in_vessel in inputs:
+            # Get vessel
             vessel = inputs[self.in_vessel]
-            assert isinstance(vessel, Vessel)
+
+            # Get timer
+            if vessel.destination_dock in ["1", "2"]:
+                # Route to A
+                timer = vessel.
 
             # Enqueue the vessel
             self.state.vessels.append(inputs[self.in_vessel])
@@ -81,6 +74,8 @@ class AnchorPoint(AtomicDEVS):
         return self.state.remaining_time
 
     def outputFnc(self):
+        assert self.state.what_to_do is not ""
+
         if self.state.what_to_do == "send_port_entry_request":
             assert self.state.stored_port_entry_request is not None
             to_return = {self.out_port_entry_request: self.state.stored_port_entry_request}
@@ -90,8 +85,6 @@ class AnchorPoint(AtomicDEVS):
             assert self.state.stored_vessel is not None
             to_return = {self.out_vessel: self.state.stored_vessel}
             self.state.stored_vessel = None
-        else:
-            assert False
 
         self.state.what_to_do = ""
         return to_return

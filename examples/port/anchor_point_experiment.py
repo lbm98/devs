@@ -1,7 +1,7 @@
 from pypdevs.simulator import Simulator
 from pypdevs.DEVS import AtomicDEVS, CoupledDEVS
 
-from vessels import Vessel
+from vessels import CrudeOilTanker
 from anchor_point import AnchorPoint
 from control_tower import ControlTower
 
@@ -25,7 +25,7 @@ class SimpleGenerator(AtomicDEVS):
         return 1.0
 
     def outputFnc(self):
-        vessel = Vessel(
+        vessel = CrudeOilTanker(
             uid=self.count
         )
         return {self.out_vessel: vessel}
@@ -100,5 +100,5 @@ def test2():
 
 
 if __name__ == '__main__':
-    # test1()
-    test2()
+    test1()
+    # test2()
