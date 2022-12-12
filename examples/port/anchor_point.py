@@ -67,9 +67,13 @@ class AnchorPoint(AtomicDEVS):
             self.state.what_to_do = "send_vessel"
 
             # Lookup Vessel in the queue (by vessel_uid in the PortEntryPermission)
-            self.state.stored_vessel = next(
+            vessel = next(
                 vessel for vessel in self.state.vessels if vessel.uid == port_entry_permission.vessel_uid
             )
+
+            # Set the destination dock
+            vessel.destination_dock = port_entry_permission.avl_dock
+            self.state.stored_vessel = vessel
 
         return self.state
 

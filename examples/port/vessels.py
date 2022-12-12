@@ -1,9 +1,13 @@
 class Vessel:
-
     def __init__(self, uid):
         # The unique identifier for a vessel
         # Set by Generator
-        self.uid = uid
+        self.uid: int = uid
+
+        # The destination of the vessel
+        # Set at AnchorPoint and used at confluences
+        self.destination_dock: str = None
+
         # self.creation_time = creation_time
 
 

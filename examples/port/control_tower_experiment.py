@@ -61,19 +61,42 @@ class CoupledControlTower(CoupledDEVS):
         self.connectPorts(self.control_tower.out_port_entry_permission, self.simple_collector.in_port_entry_permission)
 
 
-system = CoupledControlTower(name="system")
-sim = Simulator(system)
-sim.setTerminationTime(4)
-sim.setVerbose(None)
-sim.setClassicDEVS()
+def test1():
+    system = CoupledControlTower(name="system")
+    sim = Simulator(system)
+    # There are still docks available after 4 vessels
+    sim.setTerminationTime(4)
+    sim.setVerbose(None)
+    sim.setClassicDEVS()
 
-sim.simulate()
+    sim.simulate()
+    result = system.simple_collector.port_entry_permissions
+    print(result)
 
-# should be
-# [
-#   PortEntryPermission(vessel_uid=0, avl_dock='1'),
-#   PortEntryPermission(vessel_uid=1, avl_dock='2'),
-#   PortEntryPermission(vessel_uid=2, avl_dock='3'),
-#   PortEntryPermission(vessel_uid=3, avl_dock='4')
-# ]
-print(system.simple_collector.port_entry_permissions)
+    assert result[0].vessel_uid == 0 and result[0].avl_dock == '1'
+    assert result[1].vessel_uid == 1 and result[1].avl_dock == '2'
+    assert result[2].vessel_uid == 2 and result[2].avl_dock == '3'
+    assert result[3].vessel_uid == 3 and result[3].avl_dock == '4'
+    assert len(result) == 4
+
+
+def test2():
+    system = CoupledControlTower(name="system")
+    sim = Simulator(system)
+    # After 8 vessels, no new vessel should be given permission to dock
+    # So no new permissions should be received
+    sim.setTerminationTime(10)
+    sim.setVerbose(None)
+    sim.setClassicDEVS()
+
+    sim.simulate()
+    result = system.simple_collector.port_entry_permissions
+    print(result)
+
+    assert len(result) == 8
+
+
+if __name__ == '__main__':
+    # Choose one test
+    # test1()
+    test2()

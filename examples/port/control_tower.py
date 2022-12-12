@@ -59,7 +59,7 @@ class ControlTower(AtomicDEVS):
 
             # If all docks are occupied, we enqueue the requests
             # Else, use the first available dock
-            if not any(self.state.docks):
+            if not any(self.state.docks.values()):
                 self.state.port_entry_requests.append(port_entry_request)
             else:
                 first_avl_dock = next(
